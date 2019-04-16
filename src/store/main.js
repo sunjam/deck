@@ -135,6 +135,7 @@ export default new Vuex.Store({
 
 		// label mutators
 		removeLabelFromCurrentBoard(state, labelId) {
+			console.log(labelId)
 			const removeIndex = state.currentBoard.labels.findIndex((l) => {
 				return labelId === l.id
 			})
@@ -151,6 +152,10 @@ export default new Vuex.Store({
 
 			labelToUpdate.title = newLabel.title
 			labelToUpdate.color = newLabel.color
+		},
+		addLabelToCurrentBoard(state, newLabel) {
+
+			state.currentBoard.labels.push(newLabel)
 		}
 	},
 	actions: {
@@ -214,11 +219,23 @@ export default new Vuex.Store({
 		},
 
 		// label actions
-		removeLabelFromCurrentBoard({ commit }, labelId) {
-			commit('removeLabelFromCurrentBoard', labelId);
+		removeLabelFromCurrentBoard({ commit }, label) {
+			apiClient.deleteLabel(label)
+			.then((label) => {
+				commit('removeLabelFromCurrentBoard', label.id);
+			})	
 		}, 
 		updateLabelFromCurrentBoard({ commit }, newLabel) {
-			commit('updateLabelFromCurrentBoard', newLabel);
+			apiClient.updateLabel(newLabel)
+			.then((newLabel) => {
+				commit('updateLabelFromCurrentBoard', newLabel);
+			})	
 		}, 
+		addLabelToCurrentBoard({ commit }, newLabel) {
+			apiClient.createLabel(newLabel)
+			.then((newLabel) => {
+				commit('addLabelToCurrentBoard', newLabel);
+			})	
+		}
 	}
 })
